@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weave City – Contact</title>
+<!--
+  ★ 差し替えが必要な箇所(「仮」と書いてある所)
+   - メールアドレス / 電話番号 / 住所 / 受付時間
+   - 公式LINEのURL(.js-line-url)とQRコード画像
+   - DiscordのサーバーURL(.js-discord-url)
+   - 地図の iframe の marker(緯度・経度)
+-->
+<style>
+  :root{
+    --bg:#ede8e4;
+    --navy:#2f3a6b;
+    --navy-soft:#7a80a8;
+    --orange:#f2a93b;
+    --blue:#6ea8dc;
+    --green:#5fbf96;
+    --pink:#f7cdbd;
+    --teal:#46737a;
+    --line:#06c755;       /* LINEのブランドカラー */
+    --discord:#5865f2;    /* Discordのブランドカラー */
+    --ease:cubic-bezier(.22,.8,.2,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:"Helvetica Neue","Hiragino Sans","Noto Sans JP",system-ui,sans-serif;
+    background:var(--bg);color:var(--navy);
+    min-height:100vh;overflow-x:hidden;line-height:1.7;
+  }
+  a{color:inherit}
+
+  /* ---------- 背景のリボン ---------- */
+  .bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+  .bg path{fill:none;stroke-linecap:butt}
+  .bg .pink{stroke:var(--pink);stroke-width:44;opacity:.85}
+  .bg .orange{stroke:var(--orange);stroke-width:40}
+  .bg .blue{stroke:var(--blue);stroke-width:40}
+  .bg .green{stroke:var(--green);stroke-width:40}
+  .bg g{animation:sway 16s ease-in-out infinite alternate}
+  .bg g:nth-child(2){animation-duration:20s;animation-direction:alternate-reverse}
+  .bg g:nth-child(3){animation-duration:13s}
+  .bg g:nth-child(4){animation-duration:18s;animation-direction:alternate-reverse}
+  @keyframes sway{from{transform:translate(-12px,6px)}to{transform:translate(14px,-8px)}}
+
+  /* ---------- ナビ ---------- */
+  .nav{
+    position:fixed;top:24px;left:24px;right:24px;z-index:30;
+    height:116px;padding:0 48px;
+    display:flex;align-items:center;justify-content:space-between;
+    background:rgba(251,249,247,.94);border-radius:36px;backdrop-filter:blur(12px);
+  }
+  .brand{
+    display:flex;align-items:center;gap:12px;text-decoration:none;
+    font-size:28px;font-weight:800;letter-spacing:.02em;text-transform:uppercase;
+  }
+  .brand svg{width:34px;height:34px}
+  .menu{display:flex;gap:60px;list-style:none}
+  .menu a{position:relative;font-size:21px;font-weight:600;text-decoration:none;padding:6px 0}
+  .menu a.active::before{
+    content:"";position:absolute;left:-26px;right:-26px;top:50%;height:20px;
+    transform:translateY(-35%);z-index:-1;
+    background:radial-gradient(ellipse at center,rgba(130,140,220,.35),transparent 70%);
+  }
+  .menu a::after{
+    content:"";position:absolute;left:0;bottom:-2px;height:2px;width:0;
+    background:var(--navy);transition:width .25s;
+  }
+  .menu a:hover::after{width:100%}
+  .lang{background:none;border:0;color:var(--navy);cursor:pointer;margin-left:-20px;display:grid;place-items:center}
+  .lang svg{width:34px;height:34px}
+
+  /* ---------- 共通 ---------- */
+  main{position:relative;z-index:1;padding:200px 0 160px}
+  .pad{padding-left:6.2vw;padding-right:6.2vw}
+  .title{
+    font-size:clamp(52px,6vw,88px);font-weight:700;line-height:1.1;
+    padding-left:13.5vw;margin-bottom:20px;
+  }
+  .lead{padding-left:13.5vw;padding-right:6vw;max-width:calc(13.5vw + 680px);font-size:19px;margin-bottom:56px}
+  .eyebrow{
+    font-size:15px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--orange);margin-bottom:18px;
+  }
+  .block{margin-bottom:110px}
+  .panel{
+    background:rgba(251,249,247,.8);backdrop-filter:blur(12px);
+    border-radius:36px;padding:40px;
+  }
+  .reveal{animation:pop .6s var(--ease) both}
+  @keyframes pop{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+  /* ---------- 連絡手段カード ---------- */
+  .methods{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:24px;
+  }
+  .method{
+    display:flex;flex-direction:column;
+    padding:28px 26px 26px;border-radius:32px;
+    background:rgba(251,249,247,.85);backdrop-filter:blur(12px);
+    transition:transform .4s var(--ease),box-shadow .4s;
+  }
+  .method:hover{transform:translateY(-8px);box-shadow:0 20px 40px rgba(47,58,107,.16)}
+  .m-icon{
+    width:60px;height:60px;border-radius:50%;
+    display:grid;place-items:center;margin-bottom:18px;
+    background:var(--navy);color:#fff;
+  }
+  .m-icon svg{width:28px;height:28px}
+  .method.line .m-icon{background:var(--line)}
+  .method.discord .m-icon{background:var(--discord)}
+  .method.tel .m-icon{background:var(--teal)}
+  .method h3{font-size:24px;line-height:1.3;margin-bottom:4px}
+  .m-sub{font-size:14px;font-weight:600;opacity:.7;margin-bottom:14px}
+  .m-value{font-size:19px;font-weight:700;word-break:break-all;margin-bottom:6px}
+  .m-note{font-size:14px;opacity:.75;margin-bottom:18px}
+  .m-actions{margin-top:auto;display:flex;gap:10px;flex-wrap:wrap}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:12px 22px;border-radius:999px;border:0;
+    font-family:inherit;font-size:16px;font-weight:700;text-decoration:none;
+    color:#fff;background:var(--navy);cursor:pointer;
+    transition:transform .2s,filter .2s;
+  }
+  .btn:hover{transform:translateY(-2px);filter:brightness(1.1)}
+  .btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #7b86d8;outline-offset:3px}
+  .btn.ghost{background:transparent;color:var(--navy);border:1.5px solid rgba(47,58,107,.35)}
+  .btn.ghost:hover{background:rgba(47,58,107,.06)}
+  .btn.line{background:var(--line)}
+  .btn.discord{background:var(--discord)}
+  .btn svg{width:18px;height:18px}
+
+  /* LINEのQR置き場 */
+  .qr{
+    width:104px;height:104px;border-radius:16px;margin-bottom:14px;
+    display:grid;place-items:center;text-align:center;
+    border:2px dashed rgba(6,199,85,.6);background:rgba(6,199,85,.08);
+    font-size:12px;font-weight:700;color:#0a7d3a;line-height:1.4;
+    overflow:hidden;
+  }
+  .qr img{width:100%;height:100%;object-fit:cover;display:block}
+
+  /* ---------- フォーム + 基本情報 ---------- */
+  .two{display:grid;grid-template-columns:1.25fr 1fr;gap:32px;align-items:start}
+  .two h2,.access h2{font-size:clamp(30px,3.2vw,44px);line-height:1.2;margin-bottom:22px}
+  form{display:grid;gap:20px}
+  .field{display:grid;gap:8px}
+  .field label{font-size:15px;font-weight:700}
+  .field label .req{color:#d4572a;margin-left:6px;font-size:13px}
+  input,select,textarea{
+    width:100%;padding:15px 18px;border-radius:18px;
+    font-family:inherit;font-size:17px;color:var(--navy);
+    background:#fff;border:1.5px solid rgba(47,58,107,.22);
+    transition:border-color .2s,box-shadow .2s;
+  }
+  input:focus,select:focus,textarea:focus{border-color:var(--navy);box-shadow:0 0 0 4px rgba(47,58,107,.1);outline:none}
+  textarea{min-height:170px;resize:vertical;line-height:1.7}
+  .field.err input,.field.err select,.field.err textarea{border-color:#d4572a}
+  .err-msg{display:none;font-size:13px;font-weight:600;color:#d4572a}
+  .field.err .err-msg{display:block}
+  .form-foot{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .form-foot .btn{padding:16px 36px;font-size:18px}
+  .hint{font-size:14px;opacity:.75}
+  .thanks{
+    display:none;padding:18px 22px;border-radius:20px;
+    background:rgba(95,191,150,.25);color:#1f6446;font-weight:600;
+  }
+  .thanks.show{display:block}
+
+  dl.info{display:grid;gap:0}
+  dl.info div{
+    display:grid;grid-template-columns:96px 1fr;gap:16px;
+    padding:18px 0;border-bottom:2px dotted rgba(47,58,107,.35);
+  }
+  dl.info div:last-child{border-bottom:0}
+  dl.info dt{font-weight:700;color:var(--teal)}
+  dl.info dd{font-size:17px}
+  .sample-note{margin-top:14px;font-size:13px;opacity:.7}
+
+  /* ---------- アクセス(地図) ---------- */
+  .access .panel{padding:36px}
+  .map-wrap{
+    position:relative;
+    aspect-ratio:16/8;min-height:340px;
+    border-radius:28px;overflow:hidden;
+    background:#dfe6ea;
+    box-shadow:inset 0 0 0 1px rgba(47,58,107,.12);
+  }
+  .map-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  .area{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:22px 0 8px}
+  .area b{margin-right:6px}
+  .chip{
+    padding:7px 16px;border-radius:999px;font-size:15px;font-weight:700;
+    background:rgba(110,168,220,.28);color:#2d5e8f;
+  }
+  .chip:nth-child(3n+2){background:rgba(95,191,150,.28);color:#25704f}
+  .chip:nth-child(3n+3){background:rgba(242,169,59,.28);color:#8a5a10}
+  .map-foot{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+  .map-foot p{font-size:15px;opacity:.8}
+
+  footer{padding:60px 6.2vw 40px;font-size:14px;opacity:.8;position:relative;z-index:1}
+
+  /* ---------- トースト ---------- */
+  .toast{
+    position:fixed;left:50%;bottom:36px;z-index:50;
+    transform:translate(-50%,30px);opacity:0;pointer-events:none;
+    padding:14px 26px;border-radius:999px;
+    background:var(--navy);color:#fff;font-weight:600;
+    transition:opacity .3s,transform .3s var(--ease);
+  }
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:1280px){.methods{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:1100px){
+    .menu{gap:28px}.menu a{font-size:17px}.brand{font-size:22px}
+    .two{grid-template-columns:1fr}
+  }
+  @media (max-width:760px){
+    .nav{height:auto;padding:14px 18px;left:12px;right:12px;top:12px;flex-direction:column;gap:8px;border-radius:26px}
+    .menu{flex-wrap:wrap;justify-content:center;gap:6px 18px}
+    .menu a{font-size:14px}
+    .lang{display:none}
+    main{padding-top:190px}
+    .title,.lead{padding-left:10vw}
+    .pad{padding-left:5vw;padding-right:5vw}
+    .methods{grid-template-columns:1fr}
+    .panel{padding:26px 22px}
+    .access .panel{padding:22px}
+    .map-wrap{aspect-ratio:4/3}
+    dl.info div{grid-template-columns:1fr;gap:2px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .bg g{animation:none}.reveal{animation:none}
+  }
+</style>
+</head>
+<body>
+
+<svg class="bg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <g><path class="pink"   d="M520 1160 C640 900 760 520 900 260 C960 150 1010 40 1060 -60"/></g>
+  <g><path class="orange" d="M560 -40 C800 120 1120 250 1500 420 C1700 510 1880 620 2000 700"/></g>
+  <g><path class="blue"   d="M960 -60 C1060 150 1160 320 1240 480 C1330 660 1420 820 1580 1160"/></g>
+  <g><path class="green"  d="M1520 -60 C1500 180 1440 300 1330 420 C1200 560 1100 700 900 880 C780 980 660 1090 540 1180"/></g>
+</svg>
+
+<header class="nav">
+  <a class="brand" href="#">
+    <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
+      <rect x="5" y="5" width="30" height="30" rx="6"/>
+      <path d="M5 14c10 0 10 12 20 12s10-8 10-8M5 26c10 0 10-12 20-12"/>
+    </svg>
+    Weave City
+  </a>
+  <nav aria-label="メインメニュー">
+    <ul class="menu">
+      <li><a href="#">Home</a></li>
+      <li><a href="#">About</a></li>
+      <li><a href="#">People</a></li>
+      <li><a href="#">Co-Creation</a></li>
+      <li><a href="#">News</a></li>
+      <li><a class="active" href="#" aria-current="page">Contact</a></li>
+    </ul>
+  </nav>
+  <button class="lang" aria-label="言語を切り替え">
+    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6">
+      <circle cx="16" cy="16" r="13"/><ellipse cx="16" cy="16" rx="6" ry="13"/>
+      <path d="M3 16h26M5 9h22M5 23h22"/>
+    </svg>
+  </button>
+</header>
+
+<main>
+  <h1 class="title">Contact</h1>
+  <p class="lead">ご質問・ご相談・取材のご依頼など、お気軽にご連絡ください。下記の連絡手段のなかから、お使いやすいものをお選びいただけます。</p>
+
+  <!-- ===== 連絡手段 ===== -->
+  <section class="block pad" aria-labelledby="h-methods">
+    <p class="eyebrow" id="h-methods">Get in touch</p>
+    <div class="methods">
+
+      <!-- メール -->
+      <article class="method reveal">
+        <div class="m-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/></svg>
+        </div>
+        <h3>メール</h3>
+        <p class="m-sub">Email</p>
+        <p class="m-value" id="mailText">hello@example.com</p>
+        <p class="m-note">2営業日以内にご返信します。(仮)</p>
+        <div class="m-actions">
+          <a class="btn" href="mailto:hello@example.com">メールを書く</a>
+          <button class="btn ghost" type="button" data-copy="#mailText">コピー</button>
+        </div>
+      </article>
+
+      <!-- 電話 -->
+      <article class="method tel reveal" style="animation-delay:.07s">
+        <div class="m-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A15 15 0 0 1 3 6a2 2 0 0 1 2-2Z"/></svg>
+        </div>
+        <h3>お電話</h3>
+        <p class="m-sub">Phone</p>
+        <p class="m-value" id="telText">000-0000-0000</p>
+        <p class="m-note">平日 10:00〜17:00(仮)</p>
+        <div class="m-actions">
+          <a class="btn" href="tel:0000000000">電話をかける</a>
+          <button class="btn ghost" type="button" data-copy="#telText">コピー</button>
+        </div>
+      </article>
+
+      <!-- 公式LINE -->
+      <article class="method line reveal" style="animation-delay:.14s">
+        <div class="m-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11c0-3.900 3.600-7 8-7s8 3.100 8 7-3.600 7-8 7H9l-4 3v-4.500C4.400 15 4 13.100 4 11Z"/><path d="M8.500 11h.01M12 11h.01M15.500 11h.01" stroke-width="2.4"/></svg>
+        </div>
+        <h3>公式LINE</h3>
+        <p class="m-sub">Official LINE</p>
+        <div class="qr" id="lineQr">QRコード<br>(仮)</div>
+        <p class="m-value">@weavecity-sample</p>
+        <p class="m-note">友だち追加でトークから気軽に相談できます。</p>
+        <div class="m-actions">
+          <a class="btn line js-line-url" href="https://line.me/R/ti/p/@your_line_id" target="_blank" rel="noopener">友だち追加</a>
+        </div>
+      </article>
+
+      <!-- Discord -->
+      <article class="method discord reveal" style="animation-delay:.21s">
+        <div class="m-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.200"/><path d="M3 19c0-3.300 2.700-5.500 6-5.500s6 2.200 6 5.500"/><path d="M16 5.200a3.200 3.200 0 0 1 0 5.600M18 13.800c1.800.7 3 2.300 3 5.200"/></svg>
+        </div>
+        <h3>Discord</h3>
+        <p class="m-sub">Community server</p>
+        <p class="m-value" id="discordText">weavecity#0000</p>
+        <p class="m-note">メンバーや参加者と交流できるコミュニティです。</p>
+        <div class="m-actions">
+          <a class="btn discord js-discord-url" href="https://discord.gg/your-invite" target="_blank" rel="noopener">サーバーに参加</a>
+          <button class="btn ghost" type="button" data-copy="#discordText">IDをコピー</button>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ===== お問い合わせフォーム + 基本情報 ===== -->
+  <section class="block pad" aria-labelledby="h-form">
+    <div class="two">
+      <div class="panel">
+        <p class="eyebrow">Message</p>
+        <h2 id="h-form">お問い合わせフォーム</h2>
+        <form id="contactForm" novalidate>
+          <div class="field">
+            <label for="name">お名前<span class="req">必須</span></label>
+            <input id="name" name="name" autocomplete="name" placeholder="山田 太郎">
+            <span class="err-msg">お名前を入力してください。</span>
+          </div>
+          <div class="field">
+            <label for="email">メールアドレス<span class="req">必須</span></label>
+            <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com">
+            <span class="err-msg">正しいメールアドレスを入力してください。</span>
+          </div>
+          <div class="field">
+            <label for="type">ご用件</label>
+            <select id="type" name="type">
+              <option>ご質問・ご相談</option>
+              <option>取材・メディアのご依頼</option>
+              <option>共創・パートナーシップ</option>
+              <option>見学・イベント参加</option>
+              <option>その他</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="msg">メッセージ<span class="req">必須</span></label>
+            <textarea id="msg" name="msg" placeholder="お問い合わせ内容をご記入ください。"></textarea>
+            <span class="err-msg">メッセージを入力してください。</span>
+          </div>
+          <div class="form-foot">
+            <button class="btn" type="submit">送信する</button>
+            <span class="hint">送信すると、メールソフトが開きます。</span>
+          </div>
+          <p class="thanks" id="thanks" role="status">ありがとうございます。メールソフトが開かない場合は、上のメールアドレスまで直接ご連絡ください。</p>
+        </form>
+      </div>
+
+      <div class="panel">
+        <p class="eyebrow">Information</p>
+        <h2>基本情報</h2>
+        <dl class="info">
+          <div><dt>団体名</dt><dd>Weave City 運営事務局(仮)</dd></div>
+          <div><dt>所在地</dt><dd>〒760-0000<br>香川県高松市〇〇町1-2-3(仮)</dd></div>
+          <div><dt>受付時間</dt><dd>平日 10:00〜17:00<br>(土日祝・年末年始を除く)</dd></div>
+          <div><dt>メール</dt><dd>hello@example.com</dd></div>
+          <div><dt>電話</dt><dd>000-0000-0000</dd></div>
+          <div><dt>SNS</dt><dd>公式LINE / Discord(上記より)</dd></div>
+        </dl>
+        <p class="sample-note">※ 掲載内容はすべてサンプルです。実際の情報に差し替えてください。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== アクセス(瀬戸内の地図) ===== -->
+  <section class="block pad access" aria-labelledby="h-access">
+    <div class="panel">
+      <p class="eyebrow">Access</p>
+      <h2 id="h-access">瀬戸内地方の地図</h2>
+
+      <div class="map-wrap">
+        <!-- 瀬戸内海を中心に、岡山・広島・香川・愛媛を含む範囲。marker は拠点(仮: 高松市付近) -->
+        <iframe
+          title="瀬戸内地方の地図"
+          src="https://www.openstreetmap.org/export/embed.html?bbox=131.6%2C33.3%2C135.5%2C35.2&amp;layer=mapnik&amp;marker=34.3401%2C134.0434"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+
+      <div class="area" aria-label="活動エリア">
+        <b>活動エリア</b>
+        <span class="chip">岡山県</span>
+        <span class="chip">広島県</span>
+        <span class="chip">香川県</span>
+        <span class="chip">愛媛県</span>
+        <span class="chip">山口県(東部)</span>
+        <span class="chip">兵庫県(淡路島)</span>
+      </div>
+
+      <div class="map-foot">
+        <p>地図上のピンは拠点の所在地(仮)です。実際の所在地に合わせて差し替えてください。</p>
+        <a class="btn ghost" href="https://www.openstreetmap.org/?mlat=34.3401&amp;mlon=134.0434#map=8/34.2/133.5" target="_blank" rel="noopener">大きな地図で見る</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>© 2026 Weave City (fictional demo). All rights reserved.</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  /* ---- コピー用ボタン ---- */
+  const toast = document.getElementById('toast');
+  let tt;
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(tt);
+    tt = setTimeout(() => toast.classList.remove('show'), 2200);
+  }
+  document.querySelectorAll('[data-copy]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const text = document.querySelector(btn.dataset.copy).textContent.trim();
+      try{
+        await navigator.clipboard.writeText(text);
+        showToast('コピーしました: ' + text);
+      }catch{
+        showToast('コピーできませんでした。手動でお選びください。');
+      }
+    });
+  });
+
+  /* ---- フォーム: 入力チェック → メールソフトを開く ---- */
+  const form = document.getElementById('contactForm');
+  const thanks = document.getElementById('thanks');
+  const TO = 'hello@example.com';                       // ★ 送信先メールアドレス
+
+  const rules = {
+    name:  v => v.trim().length > 0,
+    email: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()),
+    msg:   v => v.trim().length > 0,
+  };
+  function check(id){
+    const el = form.elements[id];
+    const ok = rules[id](el.value);
+    el.closest('.field').classList.toggle('err', !ok);
+    return ok;
+  }
+  Object.keys(rules).forEach(id => {
+    form.elements[id].addEventListener('blur', () => check(id));
+    form.elements[id].addEventListener('input', () => {
+      if (form.elements[id].closest('.field').classList.contains('err')) check(id);
+    });
+  });
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const ok = Object.keys(rules).map(check).every(Boolean);
+    if (!ok){
+      form.querySelector('.field.err input, .field.err textarea')?.focus();
+      return;
+    }
+    const f = form.elements;
+    const subject = `[お問い合わせ] ${f.type.value}`;
+    const body = `お名前: ${f.name.value}\nメール: ${f.email.value}\nご用件: ${f.type.value}\n\n${f.msg.value}`;
+    thanks.classList.add('show');
+    location.href = `mailto:${TO}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  });
+})();
+</script>
+</body>
+</html>
