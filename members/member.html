@@ -73,7 +73,7 @@
   /* ---------- Gallery ---------- */
   .gallery{
     position:relative;z-index:1;
-    padding:200px 0 120px;
+    padding:0 0 120px;
   }
   .title{
     font-size:clamp(52px,6vw,88px);
@@ -308,74 +308,6 @@
     .sub-title{margin-left:5vw}
   }
   @media (prefers-reduced-motion:reduce){.leader{animation:none}}
-  
-  /* ---------- News(お知らせ一覧: 1件1行・点線区切り) ---------- */
-  .news{
-    position:relative;z-index:1;
-    padding:0 0 220px;
-  }
-  .news .title{margin-bottom:40px}
-  .news-box{
-    margin:0 6.2vw;
-    padding:12px 44px;
-    background:rgba(251,249,247,.72);
-    backdrop-filter:blur(10px);
-    border-radius:32px;
-  }
-  .news-list{list-style:none}
-  .news-list li{border-bottom:2px dotted rgba(47,58,107,.4)}   /* 各お知らせの間を点線で区切る */
-  .news-list li:last-child{border-bottom:0}
-  .news-item{
-    display:flex;align-items:center;gap:28px;
-    padding:26px 4px;
-    color:var(--navy);text-decoration:none;
-    transition:background .25s,padding .25s;
-  }
-  .news-item:hover{padding-left:14px;padding-right:14px;background:rgba(47,58,107,.05);border-radius:16px}
-  .news-item time{
-    flex:none;
-    font-size:18px;font-weight:700;color:var(--teal,#46737a);
-    font-variant-numeric:tabular-nums;letter-spacing:.02em;
-  }
-  .news-item .cat{
-    flex:none;min-width:112px;text-align:center;
-    padding:4px 14px;border-radius:999px;
-    font-size:14px;font-weight:700;letter-spacing:.06em;
-    background:rgba(242,169,59,.28);color:#8a5a10;
-  }
-  .news-item .cat.info{background:rgba(110,168,220,.28);color:#2d5e8f}
-  .news-item .cat.event{background:rgba(95,191,150,.28);color:#25704f}
-  .news-item .txt{                     /* 1行で表示。長い場合は … で省略 */
-    flex:1;min-width:0;
-    font-size:20px;font-weight:600;
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  }
-  .news-item .go{flex:none;width:26px;height:26px;transition:transform .25s}
-  .news-item:hover .go{transform:translateX(5px)}
-  .news-more{
-    display:flex;justify-content:flex-end;
-    margin:28px 6.2vw 0;
-  }
-  .news-more a{
-    display:inline-flex;align-items:center;gap:14px;
-    font-size:20px;font-weight:700;color:var(--navy);text-decoration:none;
-  }
-  .news-more .circle{
-    width:48px;height:48px;border-radius:50%;
-    display:grid;place-items:center;
-    background:var(--navy);color:#fff;transition:transform .25s;
-  }
-  .news-more a:hover .circle{transform:translateX(4px)}
-  .news-more svg{width:22px;height:22px}
-  @media (max-width:760px){
-    .news-box{margin:0 4vw;padding:6px 20px}
-    .news-item{gap:12px;padding:20px 2px}
-    .news-item time{font-size:14px}
-    .news-item .cat{display:none}
-    .news-item .txt{font-size:16px}
-    .news .title{padding-left:10vw}
-  }
-
   /* ---------- ライトボックス ---------- */
   dialog{
     border:0;background:transparent;max-width:none;max-height:none;
