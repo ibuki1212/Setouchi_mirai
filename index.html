@@ -146,14 +146,6 @@
     white-space:normal;
     overflow-wrap:anywhere;
   }
-  .btn{                           /* Learn More */
-    display:inline-flex;align-items:center;justify-content:center;
-    white-space:nowrap;                  /* "Learn / More" と2行に割れないようにする */
-    padding:14px 28px;
-    border:2px solid #4cb0ff;border-radius:6px;
-    color:#2a8fe0;text-decoration:none;font-weight:600;
-    background:rgba(255,255,255,.4);
-  }
    .btn-flat-border {
   display: inline-block;
   padding: 0.3em 4em;
@@ -174,6 +166,7 @@
 
   /* 右: 残りの幅を全部使う */
   .concept {
+    display: flex;
     flex:1 1 0;
     min-width:0;                         /* ★重要: これが無いと長い英単語が panel の方へはみ出す */
   }
@@ -521,20 +514,19 @@
   </section>
   
   <section class="introduction">
-  <aside class="panel">
-    <h3>What is SetouchiMirai?</h3>
-    <a href="#" class="btn-flat-border">Learn More</a>
-  </aside>
-  <div class="concept">
-    <h2>
-      <span>Regional</span>
-      <span>Revitalization</span>
-      <span class="times">×</span>
-      <span>Entrepreneurship</span>
-    </h2>
-  </div>
-
-</section>
+    <aside class="panel">
+      <h3>What is SetouchiMirai?</h3>
+      <a href="#" class="btn-flat-border">Learn More</a>
+    </aside>
+    <div class="concept">
+      <h2>
+        <span>Regional</span>
+        <span>Revitalization</span>
+        <span class="times">×</span>
+        <span>Entrepreneurship</span>
+      </h2>
+    </div>
+  </section>
   
   <section class="news" id="news">
   <h2 class="title">News</h2>
