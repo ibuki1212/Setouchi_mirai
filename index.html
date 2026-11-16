@@ -96,8 +96,6 @@
     .motion{top:12px;right:12px;font-size:15px;padding:10px 14px}
     .scroll{display:none}
     .headline{top:22vh}
-    .intoduction{font-size:15px}
-    .panel{font-size:15px}
   }
   @media (prefers-reduced-motion:reduce){
     .ribbons g,.scroll::before{animation:none}
@@ -114,6 +112,8 @@
   .introduction {
     z-index:1;
     display: flex;
+    white-space: nowrap
+    max-width: 768px;
   }
   .container {
     display: flex;
@@ -125,7 +125,7 @@
     position: absolute;
     max-width: 100%;
     max-height: 100%;
-    font-size: 3vw;
+    font-size: 2vw;
     color: black;
     top: -90px;
     left: 90px;
@@ -162,6 +162,7 @@
   border-radius: 3px;
   transition: .4s;
   margin: 30px;
+  font-size: 10px;
   }
   
   .btn-flat-border:hover,
@@ -171,7 +172,7 @@
   }
 
   .panel{
-    max-width:30%; padding:40px 44px; border-radius:28px;
+    max-width:45%; padding:20px 22px; border-radius:28px;
     background:rgba(179, 247, 140, 0.7); backdrop-filter:blur(10px);
     flex: 1;
     flex-basis: 30%;
@@ -182,6 +183,7 @@
     margin-top: 20px;
     margin-bottom: 16px;
     padding-left: 0;
+    font-size: 15px;
   }
 
   .concept {
@@ -211,6 +213,11 @@
       flex-direction: column;
       gap: 20px;
     }
+    .intoduction{font-size:15px}
+    .panel{font-size:15px}
+    .title1{font-size: 20px}
+    .title2{font-size: 20px}
+    .uni{ font-size: 5px}
   }
 
   .news {
