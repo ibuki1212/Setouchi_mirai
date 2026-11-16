@@ -96,6 +96,8 @@
     .motion{top:12px;right:12px;font-size:15px;padding:10px 14px}
     .scroll{display:none}
     .headline{top:22vh}
+    .intoduction{font-size:15px}
+    .panel{font-size:15px}
   }
   @media (prefers-reduced-motion:reduce){
     .ribbons g,.scroll::before{animation:none}
@@ -121,9 +123,8 @@
   }
   .title1{
     position: absolute;
-    max-width: 100px;
-    max-height: 100px;
-    line-height: 1.1;
+    max-width: 100%;
+    max-height: 100%;
     font-size: 3vw;
     color: black;
     top: -90px;
@@ -170,14 +171,13 @@
   }
 
   .panel{
-    max-width:800px;padding:40px 44px;border-radius:28px;
-    background:rgba(179, 247, 140, 0.7);backdrop-filter:blur(10px);
+    max-width:30%; padding:40px 44px; border-radius:28px;
+    background:rgba(179, 247, 140, 0.7); backdrop-filter:blur(10px);
     flex: 1;
     flex-basis: 30%;
   }
 
   .panel h2{
-    font-size:clamp(32px,4vw,56px);
     line-height:1.15;
     margin-top: 20px;
     margin-bottom: 16px;
