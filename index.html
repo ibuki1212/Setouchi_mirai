@@ -109,51 +109,52 @@
   .headline span{display:block}
   .headline span:nth-child(2){padding-left:.9em}
 
-  .introduction {
-    z-index:1;
-    display: flex;
-    white-space: nowrap
-    max-width: 768px;
-  }
-  .container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-  }
-  .title1{
-    position: absolute;
-    max-width: 100%;
-    max-height: 100%;
-    font-size: 2vw;
-    color: black;
-    top: -90px;
-    left: 90px;
+  /* =====================================================
+     ここから下が、あなたのCSSに入れる部分です。
+     クラス名は仮です。自分のHTMLのクラス名に置き換えてください。
+       .split         … 左右をまとめる親
+       .split__panel  … 左のpanel(What is ...? / ×  / Learn More)
+       .split__main   … 右の見出し(Regional Revitalization × Entrepreneurship)
+     ===================================================== */
+
+  /* 親: 左右を横並びにする */
+  .intoduction{
+    display:flex;
+    align-items:center;                 /* 縦方向は中央にそろえる */
+    gap:clamp(24px, 4vw, 72px);         /* 左右の間隔(重ならないよう必ず gap で空ける) */
+    padding:clamp(48px, 8vw, 120px) clamp(20px, 6vw, 120px);
+    max-width:1600px;
+    margin-inline:auto;
   }
 
-  .uni {
-    position: absolute;
-    width: 100px;
-    height: 100px;
-    line-height: 1.1;
-    font-size: 2.5vw;
-    color: black;
-    right: 50%;
-    top: %;
+  /* 左: panel は「幅を固定」して、縮まないようにする */
+  .panel{
+    flex:0 0 clamp(260px, 24vw, 380px); /* grow:0 / shrink:0 / 幅 = 260〜380px */
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:20px;
+    padding:clamp(28px, 3vw, 44px) clamp(24px, 2.6vw, 36px);
+    background:#c8f7a3;
+    border-radius:32px;
   }
-
-  .title2 {
-    position: absolute;
-    width: 100px;
-    height: 100px;
-    line-height: .8;
-    font-size: 3vw;
-    left: 20%;
-    white-space: nowrap;
-    color: black;
+  .split panel h3{
+    font-size:clamp(20px, 1.9vw, 28px);
+    line-height:1.4;
+    /* 1語ずつ改行されないよう、普通に折り返す */
+    white-space:normal;
+    overflow-wrap:anywhere;
   }
-
-  .btn-flat-border {
+  .btn{                           /* Learn More */
+    display:inline-flex;align-items:center;justify-content:center;
+    white-space:nowrap;                  /* "Learn / More" と2行に割れないようにする */
+    padding:14px 28px;
+    border:2px solid #4cb0ff;border-radius:6px;
+    color:#2a8fe0;text-decoration:none;font-weight:600;
+    background:rgba(255,255,255,.4);
+  }
+   .btn-flat-border {
   display: inline-block;
   padding: 0.3em 4em;
   text-decoration: none;
@@ -171,53 +172,33 @@
     color: white;
   }
 
-  .panel{
-    max-width:45%; padding:20px 22px; border-radius:28px;
-    background:rgba(179, 247, 140, 0.7); backdrop-filter:blur(10px);
-    flex: 1;
-    flex-basis: 30%;
-  }
-
-  .panel h2{
-    line-height:1.15;
-    margin-top: 20px;
-    margin-bottom: 16px;
-    padding-left: 0;
-    font-size: 15px;
-  }
-
+  /* 右: 残りの幅を全部使う */
   .concept {
-    position: relative;
-    flex: 1;
-    flex-basis: 70%;
+    flex:1 1 0;
+    min-width:0;                         /* ★重要: これが無いと長い英単語が panel の方へはみ出す */
   }
-  .title1 {
-    width: 100%;
-    height: auto;
-    display: block;
+  .concept h2 {
+    font-size:clamp(32px, 5vw, 84px);    /* 画面幅に合わせて縮む(Entrepreneurship が収まる) */
+    line-height:1.15;
+    font-weight:700;
+    letter-spacing:-.01em;
+    color:#111;
   }
-  .title2 {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-  .uni {
-    idth: 100%;
-    height: auto;
-    display: block;
+  .concept h2 span{display:block}    /* Regional / Revitalization / × / Entrepreneurship を各行に */
+  .concept h2 .times{
+    font-weight:400;color:#2f3a6b;
+    padding-left:.1em;
   }
 
-
-  @media (max-width: 768px) {
-    .introduction {
-      flex-direction: column;
-      gap: 20px;
+  /* スマホ・タブレット: 縦に積む(左右のままだと確実に窮屈になる) */
+  @media (max-width:900px){
+    .introduction{
+      flex-direction:column;
+      align-items:stretch;
+      gap:32px;
     }
-    .intoduction{font-size:15px}
-    .panel{font-size:15px}
-    .title1{font-size: 20px}
-    .title2{font-size: 20px}
-    .uni{ font-size: 5px}
+    .panel{flex:none}             /* 縦積みでは幅の固定をやめる */
+    .concept{order:-1}               /* 見出しを上に出したい場合。不要なら削除 */
   }
 
   .news {
@@ -538,21 +519,23 @@
 
     <h1 class="headline"><span>From City to </span><span>Region</span></h1>
   </section>
-
+  
   <section class="introduction">
-    <div class="container">
-      <div class="panel">  
-          <h2>What is SetouchiMirai?</h2>
-          <a href="#" class="btn-flat-border">Learn More</a>
-      </div>
-      <div class="concept">
-        <h2 class="title1">Regional Revitalization</h2>
-        <h3 id="uni">×</h3>
-        <h2 class="title2"> Entrepreneurship</h2>
-      </div>
-    </div>
-  </section>
+  <aside class="panel">
+    <h3>What is SetouchiMirai?</h3>
+    <a href="#" class="btn-flat-border">Learn More</a>
+  </aside>
+  <div class="concept">
+    <h2>
+      <span>Regional</span>
+      <span>Revitalization</span>
+      <span class="times">×</span>
+      <span>Entrepreneurship</span>
+    </h2>
+  </div>
 
+</section>
+  
   <section class="news" id="news">
   <h2 class="title">News</h2>
   <div class="news-box">
